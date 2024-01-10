@@ -33,12 +33,18 @@ namespace EcommAPI.Controllers
             
 
             var user = await _dBContext.Users.FirstOrDefaultAsync(u => 
-            u.Username == userObj.Username && u.Password == userObj.Password);
+            u.Username == userObj.Username);
 
             if(user == null)
             {
-                return NotFound(new {Message = "User Not Found" });
+                return NotFound(new {Message = "Username Not Found" });
             }
+
+            if(!(PasswordHasher.VerifyPassword(userObj.Password, user.Password)))
+            {
+                return BadRequest(new { Message = "Password Not Match!" });
+            }
+
             return Ok(new { Message = " User Login Sucessfully! "});
         }
 
